@@ -1,0 +1,34 @@
+{
+  "name": "@atamaco/preview",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "type": "module",
+  "types": "dist/index.d.ts",
+  "license": "MIT",
+  "files": [
+    "/dist",
+    "LICENSE.md"
+  ],
+  "bugs": {
+    "url": "https://github.com/AtamaCo/cx/issues"
+  },
+  "homepage": "https://github.com/AtamaCo/cx#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AtamaCo/cx.git"
+  },
+  "scripts": {
+    "build": "tsc --project ./",
+    "watch": "tsc --project ./ --watch",
+    "lint": "eslint . --ext .ts,.tsx,.js",
+    "lint:fix": "npm run lint -- --fix"
+  },
+  "devDependencies": {
+    "@atamaco/eslint-config-atama": "^1.3.0",
+    "eslint": "^8.8.0",
+    "typescript": "4.5.4"
+  },
+  "dependencies": {
+    "@atamaco/preview-messaging": "^0.0.1"
+  }
+}

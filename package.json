@@ -1,0 +1,21 @@
+{
+  "name": "@atamaco/cx",
+  "private": true,
+  "workspaces": [
+    "./packages/*",
+    "./packages/web/*"
+  ],
+  "scripts": {
+    "release": "./scripts/release.sh",
+    "prepare": "husky install",
+    "changeset": "changeset",
+    "commitlint": "commitlint"
+  },
+  "devDependencies": {
+    "@atamaco/eslint-config-atama": "^1.3.0",
+    "@changesets/cli": "^2.20.0",
+    "@commitlint/cli": "^16.0.2",
+    "@commitlint/config-conventional": "^16.0.0",
+    "husky": "^7.0.4"
+  }
+}

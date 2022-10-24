@@ -5,6 +5,7 @@ import {
   deleteComponent,
   dispatch,
   editComponent,
+  previewReady,
 } from './messages.js';
 
 interface Callbacks {
@@ -40,6 +41,11 @@ export class MessagingPreviewToStudio {
   // eslint-disable-next-line class-methods-use-this
   editComponent(correlationId: string) {
     dispatch(editComponent(correlationId), window.parent);
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  previewReady() {
+    dispatch(previewReady(), window.parent);
   }
 
   // eslint-disable-next-line class-methods-use-this

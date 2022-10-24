@@ -5,6 +5,7 @@ export enum MessageTypes {
   DELETE_COMPONENT = 'deleteComponent',
   FOCUS_COMPONENT = 'focusComponent',
   UPDATE_DATA = 'updateData',
+  PREVIEW_READY = 'previewReady',
 }
 
 interface Action<T> {
@@ -60,6 +61,13 @@ export function focusComponent(
     payload: {
       correlationId,
     },
+  };
+}
+
+export function previewReady(): Action<{}> {
+  return {
+    type: MessageTypes.PREVIEW_READY,
+    payload: {},
   };
 }
 

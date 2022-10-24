@@ -90,6 +90,9 @@ class Preview {
       attributeOldValue: false,
       characterDataOldValue: false,
     });
+
+    // Let the host know preview is ready now
+    this.messaging.previewReady();
   }
 
   destroy() {

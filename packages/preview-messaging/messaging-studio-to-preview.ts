@@ -9,6 +9,7 @@ import {
 
 interface Callbacks {
   onEditComponent: (id: string) => void;
+  onPreviewReady: () => void;
   onDeleteComponent: ({
     correlationId,
     placementId,
@@ -21,6 +22,7 @@ interface Callbacks {
 const allowedTypes = [
   MessageTypes.EDIT_COMPONENT,
   MessageTypes.DELETE_COMPONENT,
+  MessageTypes.PREVIEW_READY,
 ];
 
 /**
@@ -96,12 +98,13 @@ export class MessagingStudioToPreview {
 
     if (!type || !allowedTypes.includes(type)) {
       // eslint-disable-next-line no-console
-      // console.debug(`Unknown message`, data);
+      console.debug(`Unknown message`, data);
       return;
     }
 
-    if (event.origin !== this.allowedOrigin) {
-      // console.error(`Ignored message from unknown origin ${event.origin}`);
+    if (new URL(event.origin).origin !== new URL(this.allowedOrigin).origin) {
+      // eslint-disable-next-line no-console
+      console.error(`Ignored message from unknown origin ${event.origin}`);
       return;
     }
 
@@ -111,6 +114,10 @@ export class MessagingStudioToPreview {
 
     if (type === MessageTypes.DELETE_COMPONENT) {
       this.callbacks.onDeleteComponent(data.payload);
+    }
+
+    if (type === MessageTypes.PREVIEW_READY) {
+      this.callbacks.onPreviewReady();
     }
   }
 }

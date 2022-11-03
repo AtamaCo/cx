@@ -23,6 +23,9 @@ export function getServerSidePropsFactory<C>(
       const data = await fetcher.getData(identifier);
 
       if (!data) {
+        // eslint-disable-next-line no-console
+        console.debug(`No data found for slug '${identifier}'`);
+
         res.statusCode = 404;
 
         return {
@@ -38,6 +41,9 @@ export function getServerSidePropsFactory<C>(
         },
       };
     } catch (error) {
+      // eslint-disable-next-line no-console
+      console.warn(`Could not get data for slug '${identifier}'`, error);
+
       res.statusCode = 404;
 
       return {
@@ -59,6 +65,9 @@ export function getStaticPropsFactory<C>(
     context: GetStaticPropsContext<{ slug: string[] }>,
   ) {
     if (!slug && !context.params?.slug && prefix === '') {
+      // eslint-disable-next-line no-console
+      console.debug('No slug passed.');
+
       return {
         notFound: true,
       };
@@ -76,6 +85,9 @@ export function getStaticPropsFactory<C>(
       );
 
       if (!data) {
+        // eslint-disable-next-line no-console
+        console.debug(`No data found for slug '${identifier}'`);
+
         return {
           notFound: true,
           revalidate,
@@ -89,6 +101,9 @@ export function getStaticPropsFactory<C>(
         revalidate,
       };
     } catch (error) {
+      // eslint-disable-next-line no-console
+      console.warn(`Could not get data for slug '${identifier}'`, error);
+
       return {
         notFound: true,
         revalidate,

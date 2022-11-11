@@ -1,5 +1,17 @@
 # @atamaco/preview-react
 
+## 1.0.0
+
+### Major Changes
+
+- 2b8cd7e: Initial release
+
+### Patch Changes
+
+- Updated dependencies [2432645]
+- Updated dependencies [2b8cd7e]
+  - @atamaco/preview@1.0.0
+
 ## 3.0.1
 
 ### Patch Changes

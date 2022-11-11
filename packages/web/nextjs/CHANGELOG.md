@@ -1,5 +1,18 @@
 # @atamaco/nextjs
 
+## 1.0.0
+
+### Major Changes
+
+- 2b8cd7e: Initial release
+
+### Patch Changes
+
+- b9682ca: Added log statements
+- 3958ed1: Added debug and warn logs when fetcher returns no data or fails.
+- Updated dependencies [2b8cd7e]
+  - @atamaco/cx-core@1.0.0
+
 ## 5.0.3
 
 ### Patch Changes

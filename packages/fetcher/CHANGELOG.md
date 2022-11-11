@@ -1,5 +1,16 @@
 # @atamaco/fetcher-json
 
+## 1.0.0
+
+### Major Changes
+
+- 2b8cd7e: Initial release
+
+### Patch Changes
+
+- Updated dependencies [2b8cd7e]
+  - @atamaco/cx-core@1.0.0
+
 ## 0.1.6
 
 ### Patch Changes

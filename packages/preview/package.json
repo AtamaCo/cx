@@ -1,6 +1,6 @@
 {
   "name": "@atamaco/preview",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "main": "dist/index.js",
   "type": "module",
   "types": "dist/index.d.ts",
@@ -29,6 +29,6 @@
     "typescript": "4.5.4"
   },
   "dependencies": {
-    "@atamaco/preview-messaging": "^0.0.1"
+    "@atamaco/preview-messaging": "^1.0.0"
   }
 }

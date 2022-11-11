@@ -22,12 +22,12 @@ jobs:
 
       - name: Install Dependencies
         run: npm install
-      # - name: Create Release Pull Request or Publish to npm
-      #   id: changesets
-      #   uses: changesets/action@v1
-      #   with:
-      #     publish: npm run release
-      #     commit: "ci(changeset): version packages"
-      #     title: "ci(changeset): prepare new release"
-      #   env:
-      #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Create Release Pull Request or Publish to npm
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          publish: npm run release
+          commit: "ci(changeset): version packages"
+          title: "ci(changeset): prepare new release"
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

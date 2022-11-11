@@ -87,6 +87,7 @@ export function getStaticPropsFactory<C>(
       if (!data) {
         // eslint-disable-next-line no-console
         console.debug(`No data found for slug '${identifier}'`);
+        console.debug(data);
 
         return {
           notFound: true,
@@ -120,6 +121,8 @@ export function getStaticPathsFactory<C>(
 ) {
   return async function getStaticPaths() {
     const paths = await fetcher.getAllPaths(config);
+
+    console.debug(paths);
 
     return {
       paths,

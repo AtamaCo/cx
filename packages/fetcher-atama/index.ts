@@ -52,6 +52,8 @@ export class FetcherAtama extends Fetcher<{
 
     let result;
     try {
+      console.debug(`Running request to get paths against ${url.toString()}`);
+
       const response = await fetch(url.toString(), {
         headers: {
           Authorization: `Bearer ${this.config.apiKey}`,
@@ -59,11 +61,16 @@ export class FetcherAtama extends Fetcher<{
       });
 
       if (!response.ok) {
-        throw new Error();
+        throw new Error('Error returned from Content Delivery API');
       }
 
       result = await response.json();
+
+      console.debug(`Trace ID: ${response.headers.get('X-Amzn-Trace-Id')}`);
+
+      console.log('Received result from API', result);
     } catch (error) {
+      console.log('Could not get paths from Content Delivery API', error);
       throw new Error('Could not get paths from Content Delivery API');
     }
 
@@ -77,19 +84,22 @@ export class FetcherAtama extends Fetcher<{
    */
   async getData(identifier: string) {
     let result;
+
+    const url = new URL(
+      `v1/${this.config.environment || 'prod'}/${
+        this.config.workspaceId
+      }/data/${identifier.startsWith('/') ? identifier.slice(1) : identifier}`,
+      this.config.url || 'https://cdn.atama.land',
+    );
+
     try {
-      const response = await fetch(
-        `${this.config.url || 'https://cdn.atama.land/v1'}/${
-          this.config.environment || 'prod'
-        }/${this.config.workspaceId}/data/${
-          identifier.startsWith('/') ? identifier.slice(1) : identifier
-        }`,
-        {
-          headers: {
-            Authorization: `Bearer ${this.config.apiKey}`,
-          },
+      console.debug(`Running request to get data against ${url.toString()}`);
+
+      const response = await fetch(url.toString(), {
+        headers: {
+          Authorization: `Bearer ${this.config.apiKey}`,
         },
-      );
+      });
 
       if (!response.ok) {
         throw new Error('Error returned from Content Delivery API');

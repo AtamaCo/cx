@@ -30,4 +30,5 @@ jobs:
           commit: "ci(changeset): version packages"
           title: "ci(changeset): prepare new release"
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -16,4 +16,16 @@ do
   }
 done
 
+for dir in ./packages/web/*/
+do
+  dir=${dir%*/}
+  foldername=${dir##*/}
+  packagename="@atamaco/${foldername}"
+  {
+    npm publish --workspace ${packagename} --access public
+  } || {
+    echo "${packagename} was already published"
+  }
+done
+
 npm run changeset tag

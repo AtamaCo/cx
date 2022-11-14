@@ -1,5 +1,11 @@
 # @atamaco/fetcher-json
 
+## 2.0.2
+
+### Patch Changes
+
+- ee78ffb: Should be commonjs
+
 ## 2.0.1
 
 ### Patch Changes

@@ -1,0 +1,13 @@
+{
+  "eslint.workingDirectories": [
+    "packages/cx-core",
+    "packages/fetcher",
+    "packages/fetcher-atama",
+    "packages/preview",
+    "packages/preview-messaging",
+    "packages/preview-react",
+    "packages/renderer-react",
+    "packages/web/hydrogen",
+    "packages/web/nextjs",
+  ]
+}

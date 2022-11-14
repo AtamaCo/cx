@@ -13,10 +13,10 @@ interface Action<T> {
   payload: T;
 }
 
-export function updateData(
+export function updateData<T>(
   layout: string,
-  placements: CXPlacement[],
-): Action<{ layout: string; placements: CXPlacement[] }> {
+  placements: CXPlacement<T>[],
+): Action<{ layout: string; placements: CXPlacement<T>[] }> {
   return {
     type: MessageTypes.UPDATE_DATA,
     payload: {

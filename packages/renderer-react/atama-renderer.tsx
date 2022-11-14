@@ -3,7 +3,7 @@ import type { CXExperience } from '@atamaco/cx-core';
 
 import React, { Fragment } from 'react';
 
-interface AtamaRendererProps {
+interface AtamaRendererProps<T> {
   layouts: {
     // ToDo: This should be strictly typed with
     // `ForwardRefExoticComponent<RefAttributes<>>`
@@ -15,7 +15,7 @@ interface AtamaRendererProps {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: ComponentType<any>;
   };
-  data: CXExperience;
+  data: CXExperience<T>;
 }
 
 export interface AtamaComponentProps {
@@ -24,11 +24,11 @@ export interface AtamaComponentProps {
   'data-atama-component-name': string;
 }
 
-export function AtamaRenderer({
+export function AtamaRenderer<T>({
   layouts,
   components,
   data,
-}: AtamaRendererProps) {
+}: AtamaRendererProps<T>) {
   if (!(data.template in layouts)) {
     throw new Error(`Could not find ${data.template} in layouts`);
   }

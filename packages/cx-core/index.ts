@@ -63,7 +63,7 @@ interface CXComponent {
 /**
  * A placement in a template
  */
-export interface CXPlacement {
+export interface CXPlacement<T> {
   /**
    * An identifier for the placement. This `code` must appear in the websites
    * code to properly render the placement.
@@ -79,7 +79,7 @@ export interface CXPlacement {
    * recursive object because an `embeddableBlueprint.placements` contains other
    * `CXPlacement` again.
    */
-  embeddableBlueprint?: CXEmbeddableExperience;
+  embeddableBlueprint?: CXEmbeddableExperience<T>;
 
   /**
    * The components of the placement. If a placement does not have an embeddable
@@ -99,12 +99,12 @@ export interface CXPlacement {
 /**
  * An experience.
  */
-export interface CXExperience {
+export interface CXExperience<T> {
   /**
    * Metadata of the channel experience. This is the result of blueprints
    * "metadataPropertyConfiguration".
    */
-  meta?: object;
+  meta?: T;
 
   /**
    * The identifier for the `template`. This `template` must be registered in
@@ -115,10 +115,10 @@ export interface CXExperience {
   /**
    * An array of placements within the embeddable blueprint.
    */
-  placements: CXPlacement[];
+  placements: CXPlacement<T>[];
 }
 
 /**
  * An embeddable blueprint
  */
-interface CXEmbeddableExperience extends CXExperience {}
+interface CXEmbeddableExperience<T> extends CXExperience<T> {}

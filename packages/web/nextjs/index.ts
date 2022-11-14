@@ -2,8 +2,8 @@ import type { GetServerSidePropsContext, GetStaticPropsContext } from 'next';
 import type { Fetcher } from '@atamaco/fetcher';
 import type { CXExperience } from '@atamaco/cx-core';
 
-export interface AtamaProps {
-  data?: CXExperience;
+export interface AtamaProps<T> {
+  data?: CXExperience<T>;
   error?: boolean;
 }
 

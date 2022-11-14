@@ -1,6 +1,13 @@
 import { Fetcher } from '@atamaco/fetcher';
 import fetch from 'cross-fetch';
 
+export interface AtamaFetcherConfig {
+  apiKey: string;
+  workspaceId: string;
+  environment?: 'preview' | 'prod';
+  url?: string;
+}
+
 /**
  * Fetches data from the Atama Content Delivery API
  *
@@ -10,12 +17,7 @@ import fetch from 'cross-fetch';
  * @param {("preview"|"prod")} [config.environment=prod] - The environment to use for the Atama Content Delivery API.
  * @param {string} [config.url=http://cdn.atama.land] - The URL to use for the Atama Content Delivery API. Only use this if you are using a custom Atama Content Delivery API
  */
-export class FetcherAtama extends Fetcher<{
-  apiKey: string;
-  workspaceId: string;
-  environment?: 'preview' | 'prod';
-  url?: string;
-}> {
+export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
   /**
    * Get a list of all published paths from the Content Delivery API.
    *

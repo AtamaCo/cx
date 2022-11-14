@@ -20,11 +20,11 @@ function AtamaPreview({
   components,
   allowedOrigin,
 }: AtamaPreviewProps) {
-  const preview = useRef<Preview>();
+  const preview = useRef<Preview<{}>>();
   const [wrapper, setWrapper] = useState<HTMLDivElement>();
-  const [internalPlacements, setInternalPlacements] = useState<CXPlacement[]>(
-    [],
-  );
+  const [internalPlacements, setInternalPlacements] = useState<
+    CXPlacement<{}>[]
+  >([]);
   const [internalLayout, setInternalLayout] = useState('');
 
   useEffect(() => {
@@ -32,7 +32,7 @@ function AtamaPreview({
       preview.current = new Preview(
         wrapper,
         {
-          onDataUpdate: (placements: CXPlacement[], layout: string) => {
+          onDataUpdate: (placements: CXPlacement<{}>[], layout: string) => {
             setInternalPlacements(placements);
             setInternalLayout(layout);
           },

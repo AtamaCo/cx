@@ -63,7 +63,7 @@ export class MessagingStudioToPreview {
   /**
    * Update the data in the preview
    */
-  updateData(layout: string, placements: CXPlacement[]) {
+  updateData<T>(layout: string, placements: CXPlacement<T>[]) {
     if (!this.target.contentWindow) {
       return;
     }

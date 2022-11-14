@@ -6,14 +6,14 @@ import { Menu } from './menu.js';
 import { Components } from './component.js';
 import { Placement } from './placement.js';
 
-type Hooks = {
-  onDataUpdate: (placements: CXPlacement[], layout: string) => void;
+type Hooks<T> = {
+  onDataUpdate: (placements: CXPlacement<T>[], layout: string) => void;
 };
 
-class Preview {
+class Preview<T> {
   #mutationObserver: MutationObserver;
 
-  hooks: Hooks;
+  hooks: Hooks<T>;
 
   menu: Menu;
 
@@ -21,11 +21,11 @@ class Preview {
 
   components: Components;
 
-  messaging: MessagingPreviewToStudio;
+  messaging: MessagingPreviewToStudio<T>;
 
   activeComponentId: string;
 
-  constructor(container: HTMLElement, hooks: Hooks, allowedOrigin: string) {
+  constructor(container: HTMLElement, hooks: Hooks<T>, allowedOrigin: string) {
     this.hooks = hooks;
     this.activeComponentId = '';
     this.placement = new Placement(container);
@@ -103,7 +103,7 @@ class Preview {
     this.#mutationObserver.disconnect();
   }
 
-  handleUpdateData(placements: CXPlacement[], layout: string) {
+  handleUpdateData(placements: CXPlacement<T>[], layout: string) {
     this.hooks.onDataUpdate(placements, layout);
   }
 

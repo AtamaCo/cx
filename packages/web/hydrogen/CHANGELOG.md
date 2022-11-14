@@ -1,5 +1,11 @@
 # @atamaco/hydrogen
 
+## 1.0.2
+
+### Patch Changes
+
+- 1c86e3a: Add generics for fetcher to hooks
+
 ## 1.0.1
 
 ### Patch Changes

@@ -8,8 +8,8 @@ import {
   previewReady,
 } from './messages.js';
 
-interface Callbacks {
-  onUpdateData: (placements: CXPlacement[], layout: string) => void;
+interface Callbacks<T> {
+  onUpdateData: (placements: CXPlacement<T>[], layout: string) => void;
   onFocusComponent: (id: string) => void;
 }
 
@@ -18,8 +18,8 @@ const allowedTypes = [MessageTypes.UPDATE_DATA, MessageTypes.FOCUS_COMPONENT];
 /**
  * Handle messaging from preview to Studio UI
  */
-export class MessagingPreviewToStudio {
-  callbacks: Callbacks;
+export class MessagingPreviewToStudio<T> {
+  callbacks: Callbacks<T>;
 
   allowedOrigin: string;
 
@@ -28,7 +28,7 @@ export class MessagingPreviewToStudio {
   boundOnMessage: (event: MessageEvent) => void;
 
   constructor(
-    callbacks: Callbacks,
+    callbacks: Callbacks<T>,
     allowedOrigin: string = 'https://studio.atama.co',
   ) {
     this.callbacks = callbacks;

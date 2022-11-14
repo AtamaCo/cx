@@ -1,5 +1,11 @@
 # @atamaco/fetcher-json
 
+## 2.1.0
+
+### Minor Changes
+
+- 26ff4bd: Export atama fetcher config
+
 ## 2.0.2
 
 ### Patch Changes

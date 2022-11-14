@@ -1,5 +1,16 @@
 # @atamaco/preview-react
 
+## 2.1.0
+
+### Minor Changes
+
+- abf729b: Fix types in downstream packages
+
+### Patch Changes
+
+- Updated dependencies [abf729b]
+  - @atamaco/preview@2.1.0
+
 ## 2.0.0
 
 ### Major Changes

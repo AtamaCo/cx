@@ -21,7 +21,7 @@ export abstract class Fetcher<C> {
    * Gets the data from a remote location and returns it
    * @param identifier The identifier to use for fetching data
    */
-  abstract getData(identifier: string): Promise<CXExperience | null>;
+  abstract getData<T>(identifier: string): Promise<CXExperience<T> | null>;
 
   /**
    * Get all paths that can be loaded as a page

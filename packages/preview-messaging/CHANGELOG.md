@@ -1,5 +1,20 @@
 # [@atamaco/messaging-v1.0.0](https://github.com/atamaco/atama-integrations/compare/@atamaco/messaging-v0.1.1...@atamaco/messaging-v1.0.0) (2022-01-31)
 
+## 3.0.0
+
+### Major Changes
+
+- 65d7a39: Made CXExperience a generic
+
+### Minor Changes
+
+- abf729b: Fix types in downstream packages
+
+### Patch Changes
+
+- Updated dependencies [65d7a39]
+  - @atamaco/cx-core@3.0.0
+
 ## 2.0.0
 
 ### Major Changes

@@ -1,6 +1,6 @@
 {
   "name": "@atamaco/renderer-react",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -43,6 +43,6 @@
     "react": "*"
   },
   "dependencies": {
-    "@atamaco/cx-core": "^2.0.0"
+    "@atamaco/cx-core": "^3.0.0"
   }
 }

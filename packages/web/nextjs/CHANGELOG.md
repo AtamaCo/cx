@@ -1,5 +1,16 @@
 # @atamaco/nextjs
 
+## 3.0.0
+
+### Major Changes
+
+- 65d7a39: Added types to CXExperience
+
+### Patch Changes
+
+- Updated dependencies [65d7a39]
+  - @atamaco/cx-core@3.0.0
+
 ## 2.0.0
 
 ### Major Changes

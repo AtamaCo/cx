@@ -1,5 +1,17 @@
 # [@atamaco/preview-v2.0.1](https://github.com/atamaco/atama-integrations/compare/@atamaco/preview-v2.0.0...@atamaco/preview-v2.0.1) (2022-01-31)
 
+## 2.1.0
+
+### Minor Changes
+
+- abf729b: Fix types in downstream packages
+
+### Patch Changes
+
+- Updated dependencies [65d7a39]
+- Updated dependencies [abf729b]
+  - @atamaco/preview-messaging@3.0.0
+
 ## 2.0.0
 
 ### Major Changes

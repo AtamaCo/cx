@@ -1,5 +1,12 @@
 # @atamaco/fetcher-json
 
+## 2.0.1
+
+### Patch Changes
+
+- Updated dependencies [65d7a39]
+  - @atamaco/fetcher@3.0.0
+
 ## 2.0.0
 
 ### Major Changes

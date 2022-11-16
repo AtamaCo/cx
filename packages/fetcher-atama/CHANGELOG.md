@@ -1,5 +1,13 @@
 # @atamaco/fetcher-json
 
+## 3.0.0
+
+### Major Changes
+
+- fa9980e: Remove `cross-fetch` from `fetcher-atama`. The `cross-fetch` package is causing issues in deno runtimes. Instead if someone is using `fetcher-atama` in Node 16 they have to add a fetch polyfill themselves
+
+  i Please enter a summary for your changes.
+
 ## 2.1.0
 
 ### Minor Changes

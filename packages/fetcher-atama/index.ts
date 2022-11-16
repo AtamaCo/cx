@@ -1,5 +1,4 @@
 import { Fetcher } from '@atamaco/fetcher';
-import fetch from 'cross-fetch';
 
 export interface AtamaFetcherConfig {
   apiKey: string;

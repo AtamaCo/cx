@@ -85,7 +85,7 @@ afterAll(() => {
 });
 
 describe('getAllPaths', () => {
-  it('calls the Content Delivery API with Authorization header', async () => {
+  it('calls the Delivery API with Authorization header', async () => {
     const fetcherWithValidAPIKey = new FetcherAtama({
       apiKey: API_KEY,
       workspaceId: WORKSPACE_ID,

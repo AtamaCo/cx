@@ -29,8 +29,17 @@ export function AtamaRenderer<T>({
   components,
   data,
 }: AtamaRendererProps<T>) {
+  if (!data) {
+    throw new Error(`No data provided to AtamaRenderer.`);
+  }
+  if (!layouts) {
+    throw new Error(`No layout mapping provided to AtamaRenderer.`);
+  }
+  if (!components) {
+    throw new Error(`No component mapping provided to AtamaRenderer.`);
+  }
   if (!(data.template in layouts)) {
-    throw new Error(`Could not find ${data.template} in layouts`);
+    throw new Error(`Could not find '${data.template}' in layouts.`);
   }
 
   const Layout = layouts[data.template];

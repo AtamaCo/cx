@@ -1,5 +1,11 @@
 # @atamaco/fetcher-json
 
+## 3.0.1
+
+### Patch Changes
+
+- 108819c: Rename Content Delivery API to just Delivery API
+
 ## 3.0.0
 
 ### Major Changes

@@ -1,5 +1,11 @@
 # @atamaco/react
 
+## 3.0.1
+
+### Patch Changes
+
+- 6b0c16c: Throw error when React renderer doesn't receive data, layouts, or components
+
 ## 3.0.0
 
 ### Major Changes

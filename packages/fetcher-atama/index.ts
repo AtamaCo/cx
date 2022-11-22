@@ -8,17 +8,17 @@ export interface AtamaFetcherConfig {
 }
 
 /**
- * Fetches data from the Atama Content Delivery API
+ * Fetches data from the Atama Delivery API
  *
  * @param {config} config
- * @param {string} config.apiKey - The API key for the Atama Content Delivery API
- * @param {string} config.workspaceId - The workspace ID for the Atama Content Delivery API
- * @param {("preview"|"prod")} [config.environment=prod] - The environment to use for the Atama Content Delivery API.
- * @param {string} [config.url=http://cdn.atama.land] - The URL to use for the Atama Content Delivery API. Only use this if you are using a custom Atama Content Delivery API
+ * @param {string} config.apiKey - The API key for the Atama Delivery API
+ * @param {string} config.workspaceId - The workspace ID for the Atama Delivery API
+ * @param {("preview"|"prod")} [config.environment=prod] - The environment to use for the Atama Delivery API.
+ * @param {string} [config.url=http://cdn.atama.land] - The URL to use for the Atama Delivery API. Only use this if you are using a custom Atama Delivery API
  */
 export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
   /**
-   * Get a list of all published paths from the Content Delivery API.
+   * Get a list of all published paths from the Delivery API.
    *
    * @param {object} obj
    * @param obj.includedPaths An array of paths to include in the list of paths
@@ -53,6 +53,7 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
 
     let result;
     try {
+      // eslint-disable-next-line no-console
       console.debug(`Running request to get paths against ${url.toString()}`);
 
       const response = await fetch(url.toString(), {
@@ -62,24 +63,27 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
       });
 
       if (!response.ok) {
-        throw new Error('Error returned from Content Delivery API');
+        throw new Error('Error returned from Delivery API');
       }
 
       result = await response.json();
 
+      // eslint-disable-next-line no-console
       console.debug(`Trace ID: ${response.headers.get('X-Amzn-Trace-Id')}`);
 
+      // eslint-disable-next-line no-console
       console.log('Received result from API', result);
     } catch (error) {
-      console.log('Could not get paths from Content Delivery API', error);
-      throw new Error('Could not get paths from Content Delivery API');
+      // eslint-disable-next-line no-console
+      console.log('Could not get paths from Delivery API', error);
+      throw new Error('Could not get paths from Delivery API');
     }
 
     return result.paths;
   }
 
   /**
-   * Get data for a specific path from the Content Delivery API.
+   * Get data for a specific path from the Delivery API.
    *
    * @param {string} identifier The path to get data for
    */
@@ -94,6 +98,7 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
     );
 
     try {
+      // eslint-disable-next-line no-console
       console.debug(`Running request to get data against ${url.toString()}`);
 
       const response = await fetch(url.toString(), {
@@ -103,12 +108,12 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
       });
 
       if (!response.ok) {
-        throw new Error('Error returned from Content Delivery API');
+        throw new Error('Error returned from Delivery API');
       }
 
       result = await response.json();
     } catch (error) {
-      throw new Error('Could not get data from Content Delivery API');
+      throw new Error('Could not get data from Delivery API');
     }
 
     return result;

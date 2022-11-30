@@ -1,5 +1,5 @@
 import type { GetServerSidePropsContext, GetStaticPropsContext } from 'next';
-import type { Fetcher } from '@atamaco/fetcher';
+import type { AtamaFetcherError, Fetcher } from '@atamaco/fetcher';
 import type { CXExperience } from '@atamaco/cx-core';
 
 export interface AtamaProps<T> {
@@ -13,7 +13,6 @@ export function getServerSidePropsFactory<C>(
 ) {
   return async function getServerSideProps({
     params = {},
-    res,
   }: GetServerSidePropsContext) {
     const identifier =
       slug ||
@@ -26,13 +25,7 @@ export function getServerSidePropsFactory<C>(
         // eslint-disable-next-line no-console
         console.debug(`No data found for slug '${identifier}'`);
 
-        res.statusCode = 404;
-
-        return {
-          props: {
-            error: true,
-          },
-        };
+        throw new Error(`No data found for slug '${identifier}'`);
       }
 
       return {
@@ -41,16 +34,18 @@ export function getServerSidePropsFactory<C>(
         },
       };
     } catch (error) {
+      if ((error as AtamaFetcherError).message === 'not_found') {
+        // eslint-disable-next-line no-console
+        console.warn(`Could not find data for slug '${identifier}'`);
+
+        return {
+          notFound: true,
+        };
+      }
+
       // eslint-disable-next-line no-console
-      console.warn(`Could not get data for slug '${identifier}'`, error);
-
-      res.statusCode = 404;
-
-      return {
-        props: {
-          error: true,
-        },
-      };
+      console.warn(`Could not get data for slug '${identifier}'`);
+      throw new Error(`Could not get data for slug '${identifier}'`);
     }
   };
 }
@@ -66,11 +61,9 @@ export function getStaticPropsFactory<C>(
   ) {
     if (!slug && !context.params?.slug && prefix === '') {
       // eslint-disable-next-line no-console
-      console.debug('No slug passed.');
+      console.debug('No slug passed in.');
 
-      return {
-        notFound: true,
-      };
+      throw new Error('No slug passed in.');
     }
 
     const identifier =
@@ -87,12 +80,7 @@ export function getStaticPropsFactory<C>(
       if (!data) {
         // eslint-disable-next-line no-console
         console.debug(`No data found for slug '${identifier}'`);
-        console.debug(data);
-
-        return {
-          notFound: true,
-          revalidate,
-        };
+        throw new Error(`No data found for slug '${identifier}'`);
       }
 
       return {
@@ -102,13 +90,19 @@ export function getStaticPropsFactory<C>(
         revalidate,
       };
     } catch (error) {
+      if ((error as AtamaFetcherError).message === 'not_found') {
+        // eslint-disable-next-line no-console
+        console.warn(`Could not find data for slug '${identifier}'`, error);
+
+        return {
+          notFound: true,
+          revalidate,
+        };
+      }
+
       // eslint-disable-next-line no-console
       console.warn(`Could not get data for slug '${identifier}'`, error);
-
-      return {
-        notFound: true,
-        revalidate,
-      };
+      throw new Error(`Could not get data for slug '${identifier}'`);
     }
   };
 }
@@ -120,13 +114,20 @@ export function getStaticPathsFactory<C>(
   },
 ) {
   return async function getStaticPaths() {
-    const paths = await fetcher.getAllPaths(config);
+    try {
+      const paths = await fetcher.getAllPaths(config);
+      return {
+        paths,
+        fallback: 'blocking',
+      };
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.warn('Could not get paths', error);
 
-    console.debug(paths);
-
-    return {
-      paths,
-      fallback: 'blocking',
-    };
+      return {
+        paths: [],
+        fallback: 'blocking',
+      };
+    }
   };
 }

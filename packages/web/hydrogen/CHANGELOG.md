@@ -1,5 +1,12 @@
 # @atamaco/hydrogen
 
+## 1.0.3
+
+### Patch Changes
+
+- Updated dependencies [fda4fdb]
+  - @atamaco/fetcher@4.0.0
+
 ## 1.0.2
 
 ### Patch Changes

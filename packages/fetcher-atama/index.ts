@@ -1,4 +1,6 @@
-import { Fetcher } from '@atamaco/fetcher';
+import type { CXExperience } from '@atamaco/cx-core';
+
+import { AtamaFetcherError, Fetcher } from '@atamaco/fetcher';
 
 export interface AtamaFetcherConfig {
   apiKey: string;
@@ -30,7 +32,7 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
   }: {
     includedPaths?: string[];
     excludedPaths?: string[];
-  } = {}) {
+  } = {}): Promise<string[]> {
     const url = this.config.url
       ? new URL(
           `v1/${this.config.environment || 'prod'}/${
@@ -63,7 +65,7 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
       });
 
       if (!response.ok) {
-        throw new Error('Error returned from Delivery API');
+        throw new AtamaFetcherError(response.status);
       }
 
       result = await response.json();
@@ -76,7 +78,12 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
     } catch (error) {
       // eslint-disable-next-line no-console
       console.log('Could not get paths from Delivery API', error);
-      throw new Error('Could not get paths from Delivery API');
+
+      if (error instanceof AtamaFetcherError) {
+        throw error;
+      }
+
+      throw new AtamaFetcherError(500);
     }
 
     return result.paths;
@@ -87,9 +94,7 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
    *
    * @param {string} identifier The path to get data for
    */
-  async getData(identifier: string) {
-    let result;
-
+  async getData<T>(identifier: string): Promise<CXExperience<T>> {
     const url = new URL(
       `v1/${this.config.environment || 'prod'}/${
         this.config.workspaceId
@@ -108,14 +113,16 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
       });
 
       if (!response.ok) {
-        throw new Error('Error returned from Delivery API');
+        throw new AtamaFetcherError(response.status);
       }
 
-      result = await response.json();
+      return await response.json();
     } catch (error) {
-      throw new Error('Could not get data from Delivery API');
-    }
+      if (error instanceof AtamaFetcherError) {
+        throw error;
+      }
 
-    return result;
+      throw new AtamaFetcherError(500);
+    }
   }
 }

@@ -1,5 +1,4 @@
 import type { CXExperience } from '@atamaco/cx-core';
-import type { RequestDocument } from 'graphql-request';
 
 import { AtamaFetcherError, Fetcher } from '@atamaco/fetcher';
 import { gql, GraphQLClient } from 'graphql-request';
@@ -83,10 +82,6 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
       }
 
       result = response.getPaths;
-
-      // TODO we lose this ability I think
-      // eslint-disable-next-line no-console
-      // console.debug(`Trace ID: ${response.headers.get('X-Amzn-Trace-Id')}`);
 
       // eslint-disable-next-line no-console
       console.log('Received result from API', result);
@@ -187,10 +182,7 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
     }
   }
 
-  async runGraphQLRequest<T>(
-    query: RequestDocument,
-    variables: object,
-  ): Promise<T> {
+  async runGraphQLRequest<T>(query: string, variables: object): Promise<T> {
     const url = this.config.url || 'https://cdn.atama.land/v1';
     // eslint-disable-next-line no-console
     console.debug(`Running GraphQL request to ${url}`);
@@ -201,6 +193,14 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
         },
       });
     }
-    return this.graphQLClient.request<T>(query, variables);
+
+    // Using raw request to bring out the headers for tracing.
+    const { data, headers } = await this.graphQLClient.rawRequest<T>(
+      query,
+      variables,
+    );
+    // eslint-disable-next-line no-console
+    console.debug(`Trace ID: ${headers.get('X-Amzn-Trace-Id')}`);
+    return data;
   }
 }

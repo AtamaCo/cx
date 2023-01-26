@@ -28,7 +28,8 @@
     "build": "tsc --project ./",
     "watch": "tsc --project ./ --watch",
     "lint": "eslint . --ext .ts,.tsx,.js",
-    "lint:fix": "npm run lint -- --fix"
+    "lint:fix": "npm run lint -- --fix",
+    "test": "jest"
   },
   "devDependencies": {
     "@atamaco/eslint-config-atama": "^1.3.0",

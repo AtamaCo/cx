@@ -64,9 +64,6 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
 
     let result;
     try {
-      // eslint-disable-next-line no-console
-      console.debug(`Running request to get paths against ${this.config.url}`);
-
       const response = await this.runGraphQLRequest<{
         getPaths: string[];
       }>(
@@ -120,9 +117,6 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
     };
 
     try {
-      // eslint-disable-next-line no-console
-      console.debug(`Running request to get data against ${this.config.url}`);
-
       const response = await this.runGraphQLRequest<{
         getData: CXExperience<T>;
       }>(
@@ -197,8 +191,11 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
     query: RequestDocument,
     variables: object,
   ): Promise<T> {
+    const url = this.config.url || 'https://cdn.atama.land/v1';
+    // eslint-disable-next-line no-console
+    console.debug(`Running GraphQL request to ${url}`);
     if (!this.graphQLClient) {
-      this.graphQLClient = new GraphQLClient(`${this.config.url}`, {
+      this.graphQLClient = new GraphQLClient(url, {
         headers: {
           Authorization: `Bearer ${this.config.apiKey}`,
         },

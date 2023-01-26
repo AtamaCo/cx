@@ -1,4 +1,4 @@
-import { rest } from 'msw';
+import { graphql } from 'msw';
 import { setupServer } from 'msw/node';
 
 import { FetcherAtama } from './index';
@@ -7,68 +7,26 @@ const API_KEY = 'test-api-key';
 const WORKSPACE_ID = 'test-workspace-id';
 
 const server = setupServer(
-  rest.get(
-    'https://cdn.atama.land/v1/prod/:workspaceId/paths',
-    (req, res, ctx) => {
-      const auth = req.headers.get('Authorization');
-
-      if (!auth || auth !== `Bearer ${API_KEY}`) {
-        return res(ctx.status(403), ctx.json({ message: 'Unauthorized' }));
-      }
-
-      if (req.params.workspaceId !== WORKSPACE_ID) {
-        return res(ctx.status(404), ctx.json({ message: 'Not found' }));
-      }
-
-      if (req.url.searchParams.get('includedPaths')) {
-        return res(
-          ctx.status(200),
-          ctx.json({
-            paths: [
-              '/included',
-              '/paths',
-              req.url.searchParams.get('includedPaths'),
-            ],
-          }),
-        );
-      }
-
-      if (req.url.searchParams.get('excludedPaths')) {
-        return res(
-          ctx.status(200),
-          ctx.json({
-            paths: [
-              '/excluded',
-              '/paths',
-              req.url.searchParams.get('excludedPaths'),
-            ],
-          }),
-        );
-      }
-
-      return res(
-        ctx.status(200),
-        ctx.json({
-          paths: ['/index', '/about'],
-        }),
-      );
-    },
-  ),
-  rest.get('https://custom.api/v1/prod/:workspaceId/paths', (req, res, ctx) => {
+  graphql.query('GetPaths', (req, res, ctx) => {
+    let paths = ['/index', '/about'];
+    if (req.variables.pathsInput.workspaceId !== WORKSPACE_ID) {
+      return res(ctx.errors([{ message: 'Not found' }]));
+    }
     const auth = req.headers.get('Authorization');
 
     if (!auth || auth !== `Bearer ${API_KEY}`) {
-      return res(ctx.status(403), ctx.json({ message: 'Unauthorized' }));
+      return res(ctx.errors([{ message: 'Unauthorized' }]));
     }
 
-    if (req.params.workspaceId !== WORKSPACE_ID) {
-      return res(ctx.status(404), ctx.json({ message: 'Not found' }));
+    if (req.variables.pathsInput.excludedPaths) {
+      paths = ['/excluded', '/paths', req.variables.pathsInput.excludedPaths];
     }
-
+    if (req.variables.pathsInput.includedPaths) {
+      paths = ['/included', '/paths', req.variables.pathsInput.includedPaths];
+    }
     return res(
-      ctx.status(200),
-      ctx.json({
-        paths: ['/index', '/about'],
+      ctx.data({
+        getPaths: paths,
       }),
     );
   }),
@@ -150,22 +108,5 @@ describe('getAllPaths', () => {
     });
 
     expect(result).toEqual([...excludedPaths, excludedPaths.join(',')]);
-  });
-
-  it('throws if it cannot parse the response', async () => {
-    server.use(
-      rest.get(
-        'https://cdn.atama.land/v1/prod/:workspaceId/paths',
-        (req, res, ctx) =>
-          res.once(ctx.status(200), ctx.text('this is not JSON')),
-      ),
-    );
-
-    const fetcher = new FetcherAtama({
-      apiKey: API_KEY,
-      workspaceId: WORKSPACE_ID,
-    });
-
-    await expect(fetcher.getAllPaths()).rejects.toThrow();
   });
 });

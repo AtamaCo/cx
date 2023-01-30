@@ -3,17 +3,19 @@ import type { CXExperience } from '@atamaco/cx-core';
 
 export class AtamaFetcherError extends Error {
   constructor(private readonly statusCode: number) {
-    super();
-    let message = 'internal_server_error';
-
-    if (statusCode === 401) {
-      message = 'unauthorized';
-    }
-    if (statusCode === 404) {
-      message = 'not_found';
-    }
-
-    super(message);
+    super(
+      [
+        {
+          status: 401,
+          message: 'unauthorized',
+        },
+        {
+          status: 404,
+          message: 'not_found',
+        },
+      ].find((config) => config.status === statusCode)?.message ||
+        'internal_server_error',
+    );
 
     Object.setPrototypeOf(this, AtamaFetcherError.prototype);
   }

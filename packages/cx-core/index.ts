@@ -97,6 +97,28 @@ export interface CXPlacement<T> {
 }
 
 /**
+ * A bundle manifest containing information for actions.
+ */
+export interface CXBundleManifest {
+  providers: {
+    type: string;
+    endpoint: string;
+  }[];
+  actions: {
+    actionId: string;
+    providerConfigs: {
+      providerConfigSecretArn: string;
+      type: string;
+      mappingDefinitions: {
+        key: string;
+        type: string;
+        instructions: string;
+      }[];
+    }[];
+  }[];
+}
+
+/**
  * An experience.
  */
 export interface CXExperience<T> {
@@ -116,6 +138,8 @@ export interface CXExperience<T> {
    * An array of placements within the embeddable blueprint.
    */
   placements: CXPlacement<T>[];
+
+  bundleManifest?: CXBundleManifest;
 }
 
 /**

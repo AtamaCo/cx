@@ -1,12 +1,27 @@
 import type { CXExperience } from '@atamaco/cx-core';
+import type { GraphQLError } from 'graphql';
 
 import { AtamaFetcherError, Fetcher } from '@atamaco/fetcher';
+import { gql, GraphQLClient } from 'graphql-request';
 
 export interface AtamaFetcherConfig {
   apiKey: string;
   workspaceId: string;
   environment?: 'preview' | 'prod';
   url?: string;
+}
+
+interface GetPathsInput {
+  workspaceId: string;
+  environment?: 'preview' | 'prod';
+  excludedPaths?: String;
+  includedPaths?: String;
+}
+
+interface GetDataInput {
+  workspaceId: string;
+  environment: 'preview' | 'prod';
+  slug: String;
 }
 
 /**
@@ -19,6 +34,8 @@ export interface AtamaFetcherConfig {
  * @param {string} [config.url=http://cdn.atama.land] - The URL to use for the Atama Delivery API. Only use this if you are using a custom Atama Delivery API
  */
 export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
+  graphQLClient?: GraphQLClient;
+
   /**
    * Get a list of all published paths from the Delivery API.
    *
@@ -33,45 +50,38 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
     includedPaths?: string[];
     excludedPaths?: string[];
   } = {}): Promise<string[]> {
-    const url = this.config.url
-      ? new URL(
-          `v1/${this.config.environment || 'prod'}/${
-            this.config.workspaceId
-          }/paths`,
-          this.config.url,
-        )
-      : new URL(
-          `https://cdn.atama.land/v1/${this.config.environment || 'prod'}/${
-            this.config.workspaceId
-          }/paths`,
-        );
+    const pathsInput: GetPathsInput = {
+      workspaceId: this.config.workspaceId,
+      environment: this.config.environment,
+    };
     if (includedPaths) {
-      url.searchParams.set('includedPaths', includedPaths?.join(','));
+      pathsInput.includedPaths = includedPaths?.join(',');
     }
 
     if (excludedPaths) {
-      url.searchParams.set('excludedPaths', excludedPaths?.join(','));
+      pathsInput.excludedPaths = excludedPaths?.join(',');
     }
 
     let result;
     try {
-      // eslint-disable-next-line no-console
-      console.debug(`Running request to get paths against ${url.toString()}`);
-
-      const response = await fetch(url.toString(), {
-        headers: {
-          Authorization: `Bearer ${this.config.apiKey}`,
+      const response = await this.runGraphQLRequest<{
+        getPaths: string[];
+      }>(
+        gql`
+          query GetPaths($pathsInput: GetPathsInput!) {
+            getPaths(pathsInput: $pathsInput)
+          }
+        `,
+        {
+          pathsInput,
         },
-      });
+      );
 
-      if (!response.ok) {
-        throw new AtamaFetcherError(response.status);
+      if (!response.getPaths) {
+        throw new AtamaFetcherError(500);
       }
 
-      result = await response.json();
-
-      // eslint-disable-next-line no-console
-      console.debug(`Trace ID: ${response.headers.get('X-Amzn-Trace-Id')}`);
+      result = response.getPaths;
 
       // eslint-disable-next-line no-console
       console.log('Received result from API', result);
@@ -86,7 +96,7 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
       throw new AtamaFetcherError(500);
     }
 
-    return result.paths;
+    return result;
   }
 
   /**
@@ -95,33 +105,127 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
    * @param {string} identifier The path to get data for
    */
   async getData<T>(identifier: string): Promise<CXExperience<T>> {
-    const url = new URL(
-      `v1/${this.config.environment || 'prod'}/${
-        this.config.workspaceId
-      }/data/${identifier.startsWith('/') ? identifier.slice(1) : identifier}`,
-      this.config.url || 'https://cdn.atama.land',
-    );
+    const dataInput: GetDataInput = {
+      workspaceId: this.config.workspaceId,
+      environment: this.config.environment || 'prod',
+      slug: identifier,
+    };
 
     try {
-      // eslint-disable-next-line no-console
-      console.debug(`Running request to get data against ${url.toString()}`);
-
-      const response = await fetch(url.toString(), {
-        headers: {
-          Authorization: `Bearer ${this.config.apiKey}`,
+      const response = await this.runGraphQLRequest<{
+        getData: CXExperience<T>;
+      }>(
+        gql`
+          query GetData($dataInput: GetDataInput!) {
+            getData(dataInput: $dataInput) {
+              meta
+              template
+              placements {
+                code
+                embeddableBlueprint {
+                  template
+                  placements {
+                    components {
+                      correlationId
+                      type
+                      contentProperties
+                      visualProperties
+                      componentTypeName
+                    }
+                  }
+                }
+                components {
+                  correlationId
+                  type
+                  contentProperties
+                  visualProperties
+                  componentTypeName
+                }
+              }
+              bundleManifest {
+                providers {
+                  type
+                  endpoint
+                }
+                actions {
+                  actionId
+                  providerConfigs {
+                    providerConfigSecretArn
+                    type
+                    mappingDefinitions {
+                      key
+                      type
+                      instructions
+                    }
+                  }
+                }
+              }
+            }
+          }
+        `,
+        {
+          dataInput,
         },
-      });
+      );
 
-      if (!response.ok) {
-        throw new AtamaFetcherError(response.status);
+      if (!response.getData) {
+        throw new AtamaFetcherError(500);
       }
 
-      return await response.json();
+      return response.getData;
     } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log('Could not get data from Delivery API', error);
       if (error instanceof AtamaFetcherError) {
         throw error;
       }
 
+      throw new AtamaFetcherError(500);
+    }
+  }
+
+  /**
+   * Either creates or re-uses a GraphQL Client to run a query with credentials
+   * configured in the {@link Fetcher}. If an error response is received from the request
+   * an {@link AtamaFetcherError} is thrown.
+   *
+   * @param query The GraphQL query string
+   * @param variables Any variables used in the above query
+   * @returns The passed in generic type from the data of the response
+   * @throws {@link AtamaFetcherError} with a status code
+   */
+  async runGraphQLRequest<T>(query: string, variables: object): Promise<T> {
+    const url = this.config.url || 'https://cdn.prod-composer.atama.land/v1';
+    // eslint-disable-next-line no-console
+    console.debug(`Running GraphQL request to ${url}`);
+    if (!this.graphQLClient) {
+      this.graphQLClient = new GraphQLClient(url, {
+        headers: {
+          Authorization: `Bearer ${this.config.apiKey}`,
+        },
+      });
+    }
+
+    try {
+      // Using raw request to bring out the headers for tracing.
+      const { data, headers } = await this.graphQLClient.rawRequest<T>(
+        query,
+        variables,
+      );
+      // eslint-disable-next-line no-console
+      console.debug(`Trace ID: ${headers.get('X-Amzn-Trace-Id')}`);
+      return data;
+    } catch (error) {
+      if (
+        (
+          error as { response: { errors: GraphQLError[] } }
+        )?.response?.errors?.some(
+          (graphQLError: GraphQLError) =>
+            graphQLError.message === 'Could not load JSON data',
+        )
+      ) {
+        throw new AtamaFetcherError(404);
+      }
       throw new AtamaFetcherError(500);
     }
   }

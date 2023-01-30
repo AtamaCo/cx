@@ -3,6 +3,7 @@ import type { CXExperience } from '@atamaco/cx-core';
 
 export class AtamaFetcherError extends Error {
   constructor(private readonly statusCode: number) {
+    super();
     let message = 'internal_server_error';
 
     if (statusCode === 401) {

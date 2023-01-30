@@ -1,4 +1,5 @@
 import type { CXExperience } from '@atamaco/cx-core';
+import type { GraphQLError } from 'graphql';
 
 import { AtamaFetcherError, Fetcher } from '@atamaco/fetcher';
 import { gql, GraphQLClient } from 'graphql-request';
@@ -173,6 +174,8 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
 
       return response.getData;
     } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log('Could not get data from Delivery API', error);
       if (error instanceof AtamaFetcherError) {
         throw error;
       }
@@ -203,21 +206,27 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
       });
     }
 
-    // Using raw request to bring out the headers for tracing.
-    const { data, headers, errors } = await this.graphQLClient.rawRequest<T>(
-      query,
-      variables,
-    );
-    // eslint-disable-next-line no-console
-    console.debug(`Trace ID: ${headers.get('X-Amzn-Trace-Id')}`);
-    if (errors) {
+    try {
+      // Using raw request to bring out the headers for tracing.
+      const { data, headers } = await this.graphQLClient.rawRequest<T>(
+        query,
+        variables,
+      );
+      // eslint-disable-next-line no-console
+      console.debug(`Trace ID: ${headers.get('X-Amzn-Trace-Id')}`);
+      return data;
+    } catch (error) {
       if (
-        errors.some((error) => error.message === 'Could not load JSON data')
+        (
+          error as { response: { errors: GraphQLError[] } }
+        )?.response?.errors?.some(
+          (graphQLError: GraphQLError) =>
+            graphQLError.message === 'Could not load JSON data',
+        )
       ) {
         throw new AtamaFetcherError(404);
       }
       throw new AtamaFetcherError(500);
     }
-    return data;
   }
 }

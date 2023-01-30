@@ -77,7 +77,6 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
       );
 
       if (!response.getPaths) {
-        // TODO: figure out what the error was and return a different status?
         throw new AtamaFetcherError(500);
       }
 
@@ -182,8 +181,18 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
     }
   }
 
+  /**
+   * Either creates or re-uses a GraphQL Client to run a query with credentials
+   * configured in the {@link Fetcher}. If an error response is received from the request
+   * an {@link AtamaFetcherError} is thrown.
+   *
+   * @param query The GraphQL query string
+   * @param variables Any variables used in the above query
+   * @returns The passed in generic type from the data of the response
+   * @throws {@link AtamaFetcherError} with a status code
+   */
   async runGraphQLRequest<T>(query: string, variables: object): Promise<T> {
-    const url = this.config.url || 'https://cdn.atama.land/v1';
+    const url = this.config.url || 'https://cdn.prod-composer.atama.land/v1';
     // eslint-disable-next-line no-console
     console.debug(`Running GraphQL request to ${url}`);
     if (!this.graphQLClient) {
@@ -195,12 +204,20 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
     }
 
     // Using raw request to bring out the headers for tracing.
-    const { data, headers } = await this.graphQLClient.rawRequest<T>(
+    const { data, headers, errors } = await this.graphQLClient.rawRequest<T>(
       query,
       variables,
     );
     // eslint-disable-next-line no-console
     console.debug(`Trace ID: ${headers.get('X-Amzn-Trace-Id')}`);
+    if (errors) {
+      if (
+        errors.some((error) => error.message === 'Could not load JSON data')
+      ) {
+        throw new AtamaFetcherError(404);
+      }
+      throw new AtamaFetcherError(500);
+    }
     return data;
   }
 }

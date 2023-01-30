@@ -1,5 +1,16 @@
 # @atamaco/fetcher-json
 
+## 5.0.1
+
+### Patch Changes
+
+- 861301f: Bumping dependency version for general fetcher package
+- 2886f50: Creating a minor version change to accommodate the 'updateInternalDependencies' rule
+- Updated dependencies [861301f]
+- Updated dependencies [2ef01d5]
+- Updated dependencies [2886f50]
+  - @atamaco/fetcher@4.2.0
+
 ## 5.0.0
 
 ### Major Changes

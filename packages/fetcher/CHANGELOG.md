@@ -1,5 +1,16 @@
 # @atamaco/fetcher-json
 
+## 4.1.0
+
+### Minor Changes
+
+- 21c0f7b: Changing the Atama Fetcher from REST to GraphQL
+
+### Patch Changes
+
+- Updated dependencies [21c0f7b]
+  - @atamaco/cx-core@3.1.0
+
 ## 4.0.0
 
 ### Major Changes

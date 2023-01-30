@@ -1,5 +1,16 @@
 # @atamaco/fetcher-json
 
+## 4.2.0
+
+### Minor Changes
+
+- 2886f50: Creating a minor version change to accommodate the 'updateInternalDependencies' rule
+
+### Patch Changes
+
+- 861301f: Bumping dependency version for general fetcher package
+- 2ef01d5: Fixing the 'double super call' for AtamaFetcherError and satisfying the 'super on the first line' restriction
+
 ## 4.1.0
 
 ### Minor Changes

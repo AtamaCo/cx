@@ -1,5 +1,11 @@
 # @atamaco/hydrogen
 
+## 1.1.0
+
+### Minor Changes
+
+- 37486bd: Bumping the version of the fetcher in an attempt to get the rendering working for the hydrogen demo site.
+
 ## 1.0.3
 
 ### Patch Changes

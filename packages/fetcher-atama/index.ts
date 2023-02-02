@@ -203,6 +203,7 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
         headers: {
           Authorization: `Bearer ${this.config.apiKey}`,
         },
+        fetch,
       });
     }
 
@@ -216,6 +217,8 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
       console.debug(`Trace ID: ${headers.get('X-Amzn-Trace-Id')}`);
       return data;
     } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('GraphQL Request Error: ', error);
       if (
         (
           error as { response: { errors: GraphQLError[] } }

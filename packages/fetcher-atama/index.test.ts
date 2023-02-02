@@ -1,5 +1,6 @@
 import { graphql } from 'msw';
 import { setupServer } from 'msw/node';
+import fetch from 'cross-fetch';
 
 import { FetcherAtama } from './index';
 
@@ -33,6 +34,7 @@ const server = setupServer(
 );
 
 beforeAll(() => {
+  global.fetch = fetch;
   server.listen({
     onUnhandledRequest: 'error',
   });

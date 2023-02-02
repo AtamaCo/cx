@@ -1,5 +1,11 @@
 # @atamaco/fetcher-json
 
+## 5.0.2
+
+### Patch Changes
+
+- d28f1dc: Passing in our fetch object to the GraphQL client to hopefully solve the graphql-request problem when built to be used with Deno
+
 ## 5.0.1
 
 ### Patch Changes

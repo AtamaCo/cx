@@ -142,24 +142,6 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
                   componentTypeName
                 }
               }
-              bundleManifest {
-                providers {
-                  type
-                  endpoint
-                }
-                actions {
-                  actionId
-                  providerConfigs {
-                    providerConfigSecretArn
-                    type
-                    mappingDefinitions {
-                      key
-                      type
-                      instructions
-                    }
-                  }
-                }
-              }
             }
           }
         `,

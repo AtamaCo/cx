@@ -1,5 +1,11 @@
 # @atamaco/cx-core
 
+## 3.2.0
+
+### Minor Changes
+
+- 11d6933: Removing Bundle Manifest since it will be retrieved on the backend by the delivery API and we no longer have to expose it directly to the client.
+
 ## 3.1.0
 
 ### Minor Changes

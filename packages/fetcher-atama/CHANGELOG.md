@@ -1,5 +1,12 @@
 # @atamaco/fetcher-json
 
+## 5.1.0
+
+### Minor Changes
+
+- 11d6933: Removing Bundle Manifest since it will be retrieved on the backend by the delivery API and we no longer have to expose it directly to the client.
+- 4ac7dae: Updating the default URL for the Delivery API. This needs to be released so we can migrate our domains
+
 ## 5.0.2
 
 ### Patch Changes

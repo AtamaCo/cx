@@ -1,6 +1,11 @@
-import type { GetServerSidePropsContext, GetStaticPropsContext } from 'next';
+import type {
+  GetServerSidePropsContext,
+  GetStaticPropsContext,
+  NextApiRequest,
+  NextApiResponse,
+} from 'next';
 import type { AtamaFetcherError, Fetcher } from '@atamaco/fetcher';
-import type { CXExperience } from '@atamaco/cx-core';
+import type { ActionConfig, CXExperience } from '@atamaco/cx-core';
 
 export interface AtamaProps<T> {
   data?: CXExperience<T>;
@@ -128,6 +133,79 @@ export function getStaticPathsFactory<C>(
         paths: [],
         fallback: 'blocking',
       };
+    }
+  };
+}
+
+export function createActionHandler<C>(fetcher: Fetcher<C>) {
+  return async function actionHandler(
+    req: NextApiRequest,
+    res: NextApiResponse,
+  ) {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const { action } = req.query;
+    const { data, slug } = req.body;
+
+    if (typeof action !== 'string') {
+      return res.status(400).json({ error: true, result: null });
+    }
+
+    let result;
+    try {
+      result = await fetcher.action({
+        actionId: action,
+        input: data,
+        slug,
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500);
+    }
+
+    return res.status(200).send(result);
+  };
+}
+
+/**
+ * Run an action on the client-side based on the given actionId.
+ *
+ * NOTE: The `error` property only indicates a high-level error with the API
+ * call. Check the `result` property for any errors with the action itself.
+ *
+ * @param actionConfig The action configuration. {@link ActionConfig}
+ */
+export function action<R, T = unknown>({
+  actionId,
+  slug,
+  apiRoutePath = '/api/action/',
+}: ActionConfig) {
+  return async (data: T) => {
+    const apiRoute = !apiRoutePath.endsWith('/')
+      ? `${apiRoutePath}/`
+      : apiRoutePath;
+
+    try {
+      const response = await fetch(`${apiRoute}${actionId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ slug, data }),
+      });
+
+      const result = (await response.json()) as R;
+
+      return {
+        error: false,
+        result,
+      } as const;
+    } catch (error) {
+      console.error(error);
+
+      return {
+        error: true,
+        result: null,
+      } as const;
     }
   };
 }

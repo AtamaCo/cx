@@ -31,7 +31,7 @@ interface GetDataInput {
  * @param {string} config.apiKey - The API key for the Atama Delivery API
  * @param {string} config.workspaceId - The workspace ID for the Atama Delivery API
  * @param {("preview"|"prod")} [config.environment=prod] - The environment to use for the Atama Delivery API.
- * @param {string} [config.url=http://cdn.atama.land] - The URL to use for the Atama Delivery API. Only use this if you are using a custom Atama Delivery API
+ * @param {string} [config.url=http://cdn.atama.app/v1] - The URL to use for the Atama Delivery API. Only use this if you are using a custom Atama Delivery API
  */
 export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
   graphQLClient?: GraphQLClient;
@@ -177,7 +177,7 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
    * @throws {@link AtamaFetcherError} with a status code
    */
   async runGraphQLRequest<T>(query: string, variables: object): Promise<T> {
-    const url = this.config.url || 'https://cdn.prod-composer.atama.land/v1';
+    const url = this.config.url || 'https://cdn.atama.app/v1';
     // eslint-disable-next-line no-console
     console.debug(`Running GraphQL request to ${url}`);
     if (!this.graphQLClient) {

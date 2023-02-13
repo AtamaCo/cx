@@ -1,5 +1,16 @@
 # @atamaco/fetcher-json
 
+## 5.2.0
+
+### Minor Changes
+
+- a1cc90d: Added support for `actions`
+
+### Patch Changes
+
+- Updated dependencies [a1cc90d]
+  - @atamaco/fetcher@4.3.0
+
 ## 5.1.0
 
 ### Minor Changes

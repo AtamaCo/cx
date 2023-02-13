@@ -1,5 +1,16 @@
 # @atamaco/react
 
+## 3.1.0
+
+### Minor Changes
+
+- a1cc90d: Added support for `actions`
+
+### Patch Changes
+
+- Updated dependencies [a1cc90d]
+  - @atamaco/cx-core@3.3.0
+
 ## 3.0.1
 
 ### Patch Changes

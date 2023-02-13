@@ -1,5 +1,11 @@
 # @atamaco/cx-core
 
+## 3.3.0
+
+### Minor Changes
+
+- a1cc90d: Added support for `actions`
+
 ## 3.2.0
 
 ### Minor Changes

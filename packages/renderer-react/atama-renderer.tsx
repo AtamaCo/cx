@@ -24,6 +24,11 @@ export interface AtamaComponentProps {
   'data-atama-component-name': string;
 }
 
+export type AtamaActions = Array<{
+  key: string;
+  actionId: string;
+}>;
+
 export function AtamaRenderer<T>({
   layouts,
   components,
@@ -70,6 +75,7 @@ export function AtamaRenderer<T>({
                   contentProperties,
                   visualProperties,
                   componentTypeName,
+                  actions,
                 },
                 index,
               ) => {
@@ -89,6 +95,7 @@ export function AtamaRenderer<T>({
                     {...contentProperties}
                     {...visualProperties}
                     atama={atama}
+                    actions={actions}
                   />
                 );
               },

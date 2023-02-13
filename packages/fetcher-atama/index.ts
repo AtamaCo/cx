@@ -131,6 +131,10 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
                       contentProperties
                       visualProperties
                       componentTypeName
+                      actions {
+                        key
+                        actionId
+                      }
                     }
                   }
                 }
@@ -140,6 +144,10 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
                   contentProperties
                   visualProperties
                   componentTypeName
+                  actions {
+                    key
+                    actionId
+                  }
                 }
               }
             }
@@ -167,16 +175,71 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
   }
 
   /**
+   * Run an action against the Delivery API.
+   */
+  async action<T, R>({
+    actionId,
+    slug,
+    input,
+  }: {
+    actionId: string;
+    slug: string;
+    input: T;
+  }) {
+    let result;
+    try {
+      const response = await this.runGraphQLRequest<{
+        action: R;
+      }>(
+        gql`
+          mutation Action(
+            $dataInput: GetDataInput!
+            $actionInput: ActionInput!
+          ) {
+            action(dataInput: $dataInput, actionInput: $actionInput)
+          }
+        `,
+        {
+          dataInput: {
+            workspaceId: this.config.workspaceId,
+            environment: this.config.environment || 'prod',
+            slug,
+          },
+          actionInput: {
+            actionId,
+            input,
+          },
+        },
+      );
+
+      result = response.action;
+
+      // eslint-disable-next-line no-console
+      console.log('Received action result from API', result);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log('Could not run action against Delivery API', error);
+
+      throw new AtamaFetcherError(500);
+    }
+
+    return result;
+  }
+
+  /**
    * Either creates or re-uses a GraphQL Client to run a query with credentials
-   * configured in the {@link Fetcher}. If an error response is received from the request
-   * an {@link AtamaFetcherError} is thrown.
+   * configured in the {@link Fetcher}. If an error response is received from
+   * the request an {@link AtamaFetcherError} is thrown.
    *
    * @param query The GraphQL query string
    * @param variables Any variables used in the above query
    * @returns The passed in generic type from the data of the response
    * @throws {@link AtamaFetcherError} with a status code
    */
-  async runGraphQLRequest<T>(query: string, variables: object): Promise<T> {
+  private async runGraphQLRequest<T>(
+    query: string,
+    variables: object,
+  ): Promise<T> {
     const url = this.config.url || 'https://cdn.atama.app/v1';
     // eslint-disable-next-line no-console
     console.debug(`Running GraphQL request to ${url}`);

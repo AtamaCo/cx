@@ -60,4 +60,17 @@ export abstract class Fetcher<C> {
     includedDirectories?: string[];
     excludedDirectories?: string[];
   }): Promise<string[]>;
+
+  /**
+   * Run an action
+   */
+  abstract action<T, R>({
+    actionId,
+    slug,
+    input,
+  }: {
+    actionId: string;
+    slug: string;
+    input: T;
+  }): Promise<R>;
 }

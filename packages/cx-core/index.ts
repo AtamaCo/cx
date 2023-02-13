@@ -58,6 +58,25 @@ interface CXComponent {
    * ```
    */
   visualProperties: object;
+
+  /**
+   * The action configuration for Atama Business Capability actions that are
+   * associated to the component as part of its type definition.
+   *
+   * Example:
+   * ```json
+   * [
+   *   {
+   *     "key": "actionKey",
+   *     "actionId": "businessCapabilityActionId"
+   *   }
+   * ]
+   * ```
+   */
+  actions: {
+    key: string;
+    actionId: string;
+  }[];
 }
 
 /**
@@ -122,3 +141,23 @@ export interface CXExperience<T> {
  * An embeddable blueprint
  */
 interface CXEmbeddableExperience<T> extends CXExperience<T> {}
+
+/**
+ * Configuration to run an action.
+ */
+export interface ActionConfig {
+  /**
+   * The action id to run.
+   */
+  actionId: string;
+
+  /**
+   * The location of the experience ("slug") to run the action on.
+   */
+  slug: string;
+
+  /**
+   * The path to send the request to. Defaults depend on the framework.
+   */
+  apiRoutePath?: string;
+}

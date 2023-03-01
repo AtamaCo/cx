@@ -161,3 +161,30 @@ export interface ActionConfig {
    */
   apiRoutePath?: string;
 }
+
+/**
+ * The logging interface for the CX SDK.
+ */
+export interface Logger {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  error?: (message?: any, ...optionalParams: any[]) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  warn?: (message?: any, ...optionalParams: any[]) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  info?: (message?: any, ...optionalParams: any[]) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  debug?: (message?: any, ...optionalParams: any[]) => void;
+}
+
+/**
+ * Find a component by the given component type
+ */
+export function findComponentByComponentType<T>(
+  experience: CXExperience<T>,
+  componentType: string,
+) {
+  return experience.placements
+    .flatMap((placement) => placement.components)
+    .filter((component) => !!component)
+    .filter((component) => component?.type === componentType)?.[0];
+}

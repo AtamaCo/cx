@@ -1,5 +1,5 @@
 /* eslint-disable max-classes-per-file */
-import type { CXExperience } from '@atamaco/cx-core';
+import type { CXExperience, Logger } from '@atamaco/cx-core';
 
 export class AtamaFetcherError extends Error {
   constructor(private readonly statusCode: number) {
@@ -35,11 +35,17 @@ export abstract class Fetcher<C> {
   config: C;
 
   /**
+   * The logger to use for logging
+   */
+  logger?: Logger;
+
+  /**
    * Initialize the fetcher
    * @param config The configuration for the Fetcher
    */
-  constructor(config: C) {
+  constructor(config: C, logger?: Logger) {
     this.config = config;
+    this.logger = logger;
   }
 
   /**

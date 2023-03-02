@@ -50,6 +50,16 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
     includedPaths?: string[];
     excludedPaths?: string[];
   } = {}): Promise<string[]> {
+    this.logger?.info?.(`@atamaco/fetcher-atama: Fetching paths from API`);
+    this.logger?.debug?.(
+      `@atamaco/fetcher-atama: Excluded paths`,
+      excludedPaths,
+    );
+    this.logger?.debug?.(
+      `@atamaco/fetcher-atama: Included paths`,
+      includedPaths,
+    );
+
     const pathsInput: GetPathsInput = {
       workspaceId: this.config.workspaceId,
       environment: this.config.environment,
@@ -83,11 +93,15 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
 
       result = response.getPaths;
 
-      // eslint-disable-next-line no-console
-      console.log('Received result from API', result);
+      this.logger?.debug?.(
+        '@atamaco/fetcher-atama: Received result from API',
+        result,
+      );
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.log('Could not get paths from Delivery API', error);
+      this.logger?.error?.(
+        '@atamaco/fetcher-atama: Could not get paths from Delivery API',
+        error,
+      );
 
       if (error instanceof AtamaFetcherError) {
         throw error;
@@ -105,11 +119,21 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
    * @param {string} identifier The path to get data for
    */
   async getData<T>(identifier: string): Promise<CXExperience<T>> {
+    this.logger?.info?.(
+      `@atamaco/fetcher-atama: Fetching data from API for path ${identifier}`,
+    );
+
     const dataInput: GetDataInput = {
       workspaceId: this.config.workspaceId,
       environment: this.config.environment || 'prod',
       slug: identifier,
     };
+
+    this.logger?.debug?.(
+      `@atamaco/fetcher-atama: Using the following data: ${JSON.stringify(
+        dataInput,
+      )}`,
+    );
 
     try {
       const response = await this.runGraphQLRequest<{
@@ -159,13 +183,16 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
       );
 
       if (!response.getData) {
+        this.logger?.error?.(`@atamaco/fetcher-atama: No data received`);
         throw new AtamaFetcherError(500);
       }
 
       return response.getData;
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.log('Could not get data from Delivery API', error);
+      this.logger?.error?.(
+        '@atamaco/fetcher-atama: Could not get data from Delivery API',
+        error,
+      );
       if (error instanceof AtamaFetcherError) {
         throw error;
       }
@@ -186,6 +213,13 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
     slug: string;
     input: T;
   }) {
+    this.logger?.info?.(`@atamaco/fetcher-atama: Running action ${actionId}`);
+    this.logger?.info?.(
+      `@atamaco/fetcher-atama: Running action on path ${slug} with input ${JSON.stringify(
+        input,
+      )}`,
+    );
+
     let result;
     try {
       const response = await this.runGraphQLRequest<{
@@ -214,11 +248,15 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
 
       result = response.action;
 
-      // eslint-disable-next-line no-console
-      console.log('Received action result from API', result);
+      this.logger?.debug?.(
+        '@atamaco/fetcher-atama: Received action result from API',
+        result,
+      );
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.log('Could not run action against Delivery API', error);
+      this.logger?.error?.(
+        '@atamaco/fetcher-atama: Could not run action against Delivery API',
+        error,
+      );
 
       throw new AtamaFetcherError(500);
     }
@@ -241,8 +279,9 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
     variables: object,
   ): Promise<T> {
     const url = this.config.url || 'https://cdn.atama.app/v1';
-    // eslint-disable-next-line no-console
-    console.debug(`Running GraphQL request to ${url}`);
+
+    this.logger?.debug?.(`Running GraphQL request against ${url}`);
+
     if (!this.graphQLClient) {
       this.graphQLClient = new GraphQLClient(url, {
         headers: {
@@ -258,12 +297,19 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
         query,
         variables,
       );
-      // eslint-disable-next-line no-console
-      console.debug(`Trace ID: ${headers.get('X-Amzn-Trace-Id')}`);
+
+      this.logger?.debug?.(
+        `@atamaco/fetcher-atama: Trace ID for GraphQL request is ${headers.get(
+          'X-Amzn-Trace-Id',
+        )}`,
+      );
       return data;
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('GraphQL Request Error: ', error);
+      this.logger?.error?.(
+        '@atamaco/fetcher-atama: GraphQL Request Error: ',
+        error,
+      );
+
       if (
         (
           error as { response: { errors: GraphQLError[] } }
@@ -272,8 +318,16 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
             graphQLError.message === 'Could not load JSON data',
         )
       ) {
+        this.logger?.warn?.(
+          `@atamaco/fetcher-atama: Identified error as not_found`,
+        );
+
         throw new AtamaFetcherError(404);
       }
+
+      this.logger?.warn?.(
+        `@atamaco/fetcher-atama: Identified error as internal_server_error`,
+      );
       throw new AtamaFetcherError(500);
     }
   }

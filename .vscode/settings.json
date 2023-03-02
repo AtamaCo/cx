@@ -9,5 +9,6 @@
     "packages/renderer-react",
     "packages/web/hydrogen",
     "packages/web/nextjs",
+    "packages/web/remix"
   ]
 }

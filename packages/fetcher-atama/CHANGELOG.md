@@ -1,5 +1,11 @@
 # @atamaco/fetcher-json
 
+## 5.3.1
+
+### Patch Changes
+
+- 482d071: Request code for placements in embeddable blueprint
+
 ## 5.3.0
 
 ### Minor Changes

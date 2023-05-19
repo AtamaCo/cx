@@ -149,6 +149,7 @@ export class FetcherAtama extends Fetcher<AtamaFetcherConfig> {
                 embeddableBlueprint {
                   template
                   placements {
+                    code
                     components {
                       correlationId
                       type
